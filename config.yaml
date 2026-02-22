@@ -1,0 +1,18 @@
+# config.template.yaml
+deepl:
+  api_key: "e381d18e-459f-4500-9b24-d1472895634a:fx"  # À remplacer par la clé API
+  source_lang: "FR"
+  target_lang: "EN"
+
+mistral:
+  model_name: "mistralai/Mistral-7B-v0.1"
+  lora_dir: "./data/models/lora"
+
+paths:
+  datasets: "./data/datasets"
+  reports: "./data/reports"
+  templates: "./data/templates"
+
+scraping:
+  user_agent: "Mozilla/5.0 (compatible; MagazineAIAgent/1.0)"
+  timeout: 30

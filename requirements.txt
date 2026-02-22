@@ -1,0 +1,24 @@
+# Core
+transformers==4.38.2
+peft==0.7.1
+accelerate==0.27.0
+bitsandbytes==0.42.0
+torch==2.1.2
+
+# Agents IA
+deepl==1.15.0
+sentencepiece==0.1.99
+
+# Utils
+pdfplumber==0.10.4
+python-docx==0.8.11
+fpdf==1.7.2
+weasyprint==60.0
+
+# Frontend
+streamlit==1.32.0
+
+# Backend
+fastapi==0.109.0
+uvicorn==0.27.0
+sqlalchemy==2.0.25

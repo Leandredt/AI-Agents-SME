@@ -1,0 +1,13 @@
+# Environnement
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Données sensibles
+data/datasets/*.jsonl
+data/models/*
+
+# Logs et cache
+*.log
+.cache/
