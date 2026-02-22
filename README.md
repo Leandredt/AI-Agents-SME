@@ -1,9 +1,2 @@
-# Magazine AI Agents
-
-**Automatise la relecture et la traduction pour les magazines de luxe alpin.**
-
-## 🚀 Démarrage rapide
-1. Cloner le dépôt :
-   ```bash
-   git clone https://github.com/tonsurnom/magazine-ai-agents.git
-   cd magazine-ai-agents
+# AI-Agents-SME
+Engineering 3 differents custom AI Agents for SME use cases (proofreading, domain-specific translation)
