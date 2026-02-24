@@ -19,7 +19,29 @@ This project demonstrates a complete end-to-end pipeline for fine-tuning open-we
 
 ## 🏗️ System Architecture
 ![System Architecture](assets/AI-Agents-SME.drawio.png)
+   
 
+## 📂 Project Structure
+
+```text
+ai-agents-sme/
+├── app/
+│   ├── main.py             # FastAPI application entry point
+│   ├── api/
+│   │   └── routes.py       # API endpoints definition
+│   ├── core/
+│   │   ├── config.py       # Environment variables & settings
+│   │   └── inference.py    # LLM loading and generation logic (LoRA + Base Model)
+│   └── prompts/
+│       └── templates.py    # Domain-specific prompt engineering
+├── scripts/
+│   └── train_lora.py       # PEFT/LoRA fine-tuning script
+├── assets/                 # Architecture diagrams
+├── .gitignore              # Ignores large model weights and .env
+├── Dockerfile              # Containerization instructions
+├── requirements.txt        # Python dependencies
+└── README.md
+```
 ## ⚙️ How to Run (Quickstart)
 
 1. **Clone the repository:**
