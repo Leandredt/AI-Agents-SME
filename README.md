@@ -18,7 +18,7 @@ This project demonstrates a complete end-to-end pipeline for fine-tuning open-we
 * **Production-Ready:** Packaged the inference engine into a Dockerized **FastAPI** microservice.
 
 ## 🏗️ System Architecture
-*(Insère ici une image/schéma simple fait sur Excalidraw ou draw.io montrant : Utilisateur -> FastAPI -> Modèle Fine-tuné)*
+![System Architecture](assets/AI-Agents-SME.drawio.png)
 
 ## ⚙️ How to Run (Quickstart)
 
