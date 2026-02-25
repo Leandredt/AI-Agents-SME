@@ -14,8 +14,8 @@ This project demonstrates a complete end-to-end pipeline for fine-tuning open-we
 
 **Key Achievements:**
 * **Memory Efficiency:** Utilized **LoRA (Low-Rank Adaptation)** and 4-bit quantization to fine-tune models on consumer-grade hardware.
-* **Accuracy:** Achieved **97% syntactic accuracy** for domain-specific tasks.
-* **Production-Ready:** Packaged the inference engine into a Dockerized **FastAPI** microservice.
+* **Accuracy:** Still improving for domain-specific tasks.
+* **Production:** Packaged the inference engine into a Dockerized **FastAPI** microservice.
 
 ## 🏗️ System Architecture
 ![System Architecture](assets/AI-Agents-SME.drawio.png)
@@ -26,22 +26,31 @@ This project demonstrates a complete end-to-end pipeline for fine-tuning open-we
 ```text
 ai-agents-sme/
 ├── app/
-│   ├── main.py             # FastAPI application entry point
+│   ├── main.py             # Point d'entrée FastAPI
 │   ├── api/
-│   │   └── routes.py       # API endpoints definition
+│   │   └── routes.py       # Endpoints API (upload, process)
 │   ├── core/
-│   │   ├── config.py       # Environment variables & settings
-│   │   └── inference.py    # LLM loading and generation logic (LoRA + Base Model)
+│   │   ├── config.py       # Configuration (clés API, chemins)
+│   │   └── inference.py    # Logique d'inférence (LoRA + Modèle de base)
+│   ├── models/             # Modèles LoRA fine-tunés
+│   │   └── lora_magazine_X/
 │   └── prompts/
 │       └── templates.py    # Domain-specific prompt engineering
+│   ├── static/             # Rapports PDF générés
+│   └── utils/
+│       ├── extract_text_utils.py   # Extraction de texte (PDF/Docx)
+│       └── report_utils.py # Génération de rapports
 ├── scripts/
-│   └── train_lora.py       # PEFT/LoRA fine-tuning script
-├── assets/                 # Architecture diagrams
-├── .gitignore              # Ignores large model weights and .env
-├── Dockerfile              # Containerization instructions
-├── requirements.txt        # Python dependencies
+│   ├── train_lora.py       # Script de fine-tuning LoRA
+│   └── generate_data.py    # Génération de données synthétiques
+├── assets/                 # Diagrames d'architecture
+├── Dockerfile              # Conteneurisation
+├── docker-compose.yml      # Orchestration Docker
+├── requirements.txt        # Dépendances Python
+├── config.template.yaml    # Template de configuration
 └── README.md
 ```
+
 ## ⚙️ How to Run (Quickstart)
 
 1. **Clone the repository:**

@@ -1,0 +1,14 @@
+cat > docker-compose.yml << 'EOL'
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data  # Persiste les données et modèles
+    environment:
+      - DEEPL_API_KEY=${DEEPL_API_KEY}
+    restart: unless-stopped
+
+EOL

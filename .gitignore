@@ -7,11 +7,30 @@ venv/
 # Données sensibles
 data/datasets/*.jsonl
 data/models/*
+# Fichiers de configuration sensibles
+config.yaml
+.env
 
 # Logs et cache
 *.log
 .cache/
 
-
+# Données et modèles (trop lourds pour Git)
+data/
+models/
+*.tar.gz
+*.zip
 .safetensors
 .bin
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+*.tar
+*.img
+
+# System files
+.DS_Store
+EOL

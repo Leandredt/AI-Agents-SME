@@ -1,6 +1,6 @@
 # config.template.yaml
 deepl:
-  api_key: "TON_CLE_API_DEEPL"  # À remplacer par ta vraie clé
+  api_key: "TON_CLE_API_DEEPL"  # À remplacer par la vraie clé
   source_lang: "FR"
   target_lang: "EN"
 

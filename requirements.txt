@@ -1,3 +1,4 @@
+cat > requirements.txt << 'EOL'
 # Core
 transformers==4.38.2
 peft==0.7.1
@@ -14,6 +15,11 @@ pdfplumber==0.10.4
 python-docx==0.8.11
 fpdf==1.7.2
 weasyprint==60.0
+PyYAML==6.0.1
+
+# Training
+datasets==2.16.1
+trl==0.7.11
 
 # Frontend
 streamlit==1.32.0
@@ -22,3 +28,5 @@ streamlit==1.32.0
 fastapi==0.109.0
 uvicorn==0.27.0
 sqlalchemy==2.0.25
+
+EOL
