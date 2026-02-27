@@ -1,4 +1,3 @@
-cat > scripts/generate_data.py << 'EOL'
 import json
 from transformers import pipeline
 
@@ -22,6 +21,8 @@ def generate_synthetic_data(num_examples=50):
         - Remplacer "raide" par "abrupte".
         - Remplacer "sympa" ou "cool" par "élégant" ou "chaleureux".
         - Utiliser un ton journalistique et descriptif.
+        - Eviter les expressions trop familiaires.
+        Utiliser un vocabulaire adapté aux magazines de luxe.
 
         Texte à corriger : {input_text}
         Texte corrigé :
@@ -45,5 +46,3 @@ def generate_synthetic_data(num_examples=50):
 
 if __name__ == "__main__":
     generate_synthetic_data(num_examples=50)
-
-EOL

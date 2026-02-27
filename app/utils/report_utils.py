@@ -1,4 +1,3 @@
-cat > app/utils/report_utils.py << 'EOL'
 from fpdf import FPDF
 from difflib import ndiff
 import os
@@ -40,5 +39,3 @@ def generate_report(original_text, corrected_text, reports_dir):
     pdf.output(report_path)
 
     return report_path
-
-EOL

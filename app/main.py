@@ -1,4 +1,4 @@
-cat > app/main.py << 'EOL'
+
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -86,5 +86,3 @@ async def upload_file(file: UploadFile = File(...), action: str = "relecture", c
     except Exception as e:
         logger.error(f"Erreur lors de l'upload : {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-EOL

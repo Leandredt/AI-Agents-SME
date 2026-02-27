@@ -1,4 +1,3 @@
-cat > app/utils/text_utils.py << 'EOL'
 import pdfplumber
 from docx import Document
 import os
@@ -16,5 +15,3 @@ def extract_text(file_path: str) -> str:
             return f.read()
     else:
         raise ValueError("Format de fichier non supporté : " + file_path)
-
-EOL

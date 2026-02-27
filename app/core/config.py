@@ -1,4 +1,3 @@
-cat > app/core/config.py << 'EOL'
 import yaml
 import os
 from pydantic import BaseSettings
@@ -18,5 +17,3 @@ def load_config():
     with open("config.yaml", "r") as f:
         config = yaml.safe_load(f)
     return Settings(**config)
-
-EOL

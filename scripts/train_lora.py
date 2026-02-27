@@ -1,4 +1,3 @@
-cat > scripts/train_lora.py << 'EOL'
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from peft import LoraConfig, get_peft_model
 from datasets import load_dataset
@@ -67,5 +66,3 @@ trainer.train()
 # Sauvegarder le modèle LoRA
 model.save_pretrained(config["mistral"]["lora_dir"])
 print(f"Modèle LoRA sauvegardé dans {config['mistral']['lora_dir']}")
-
-EOL

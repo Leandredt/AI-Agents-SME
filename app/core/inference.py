@@ -1,4 +1,3 @@
-cat > app/core/inference.py << 'EOL'
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from peft import PeftModel
 import torch
@@ -59,5 +58,3 @@ def process_text_with_model(text, action, charte, pipe, tokenizer):
         return result.split("Texte corrigé :")[-1].strip()
     else:
         return result.split("Traduction :")[-1].strip()
-
-EOL

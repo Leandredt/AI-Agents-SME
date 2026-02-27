@@ -1,14 +1,11 @@
-cat > docker-compose.yml << 'EOL'
 version: "3.8"
 services:
   app:
-    build: .
+    build: . #meme directory 
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Port par défaut de FastAPI/UVicorn.
     volumes:
       - ./data:/app/data  # Persiste les données et modèles
     environment:
       - DEEPL_API_KEY=${DEEPL_API_KEY}
     restart: unless-stopped
-
-EOL
