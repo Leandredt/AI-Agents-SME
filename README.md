@@ -18,7 +18,7 @@ This project demonstrates a complete end-to-end pipeline for fine-tuning open-we
 * **Production:** Packaged the inference engine into a Dockerized **FastAPI** microservice.
 
 ## 🏗️ System Architecture
-![System Architecture](assets/AI-Agents-SME.drawio.png)
+![System Architecture](assets/architechture.png)
    
 
 ## 📂 Project Structure
