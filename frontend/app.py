@@ -1,127 +1,192 @@
-# magazine_ai/app.py
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
-import os
-import yaml
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-from peft import PeftModel
-import torch
-import pdfplumber
-from docx import Document
-import tempfile
+import streamlit as st
+import requests
 
-# Charger la configuration
-with open("config.yaml", "r") as f:
-    config = yaml.safe_load(f)
+API_URL = "http://localhost:8000"
 
-# Initialiser FastAPI
-app = FastAPI()
+st.set_page_config(page_title="Magazine Alpin — Agents IA", layout="wide")
+st.title("Magazine Alpin — Agents IA")
+st.caption("Relecture et traduction pour un magazine de luxe alpin philippin")
 
-# CORS (pour permettre les requêtes depuis n'importe où en développement)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-# Charger le modèle (au démarrage, avec cache pour éviter de recharger à chaque requête)
-@app.on_event("startup")
-async def load_model():
-    global model, tokenizer, pipe
+def call_process(payload: dict):
+    try:
+        r = requests.post(f"{API_URL}/process", json=payload, timeout=120)
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.ConnectionError:
+        st.error("Impossible de joindre le backend. Vérifiez que FastAPI tourne sur le port 8000.")
+        return None
+    except requests.exceptions.HTTPError as e:
+        st.error(f"Erreur serveur : {e.response.text}")
+        return None
 
-    model_name = config["mistral"]["model_name"]
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    # Charger le modèle de base en 4-bit pour économiser la VRAM
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        load_in_4bit=True,
-        device_map="auto"
+def call_upload(file_obj, action: str, charte: str, translation_engine: str = "mistral"):
+    try:
+        r = requests.post(
+            f"{API_URL}/upload",
+            params={"action": action, "charte": charte or None, "translation_engine": translation_engine},
+            files={"file": (file_obj.name, file_obj.getvalue(), file_obj.type)},
+            timeout=180
+        )
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.ConnectionError:
+        st.error("Impossible de joindre le backend. Vérifiez que FastAPI tourne sur le port 8000.")
+        return None
+    except requests.exceptions.HTTPError as e:
+        st.error(f"Erreur serveur : {e.response.text}")
+        return None
+
+
+# ── Tabs ────────────────────────────────────────────────────────────────────
+tab1, tab2 = st.tabs(["Relecture Française", "Traduction FR → EN"])
+
+
+# ── Tab 1 : Relecture FR ────────────────────────────────────────────────────
+with tab1:
+    st.subheader("Agent Relecture Française")
+    st.markdown("Corrige un texte en français selon la charte éditoriale du magazine.")
+
+    src_fr = st.radio(
+        "Source du texte", ["Saisie directe", "Fichier (PDF / DOCX / TXT)"],
+        horizontal=True, key="src_fr"
     )
 
-    # Charger le modèle LoRA fine-tuné
-    if os.path.exists(config["mistral"]["lora_dir"]):
-        model = PeftModel.from_pretrained(model, config["mistral"]["lora_dir"])
-
-    # Créer un pipeline de génération
-    pipe = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=500,
-        device_map="auto"
-    )
-
-class TextRequest(BaseModel):
-    text: str
-    action: str  # "relecture" ou "traduction"
-    charte: Optional[str] = None
-
-@app.post("/process")
-async def process_text(request: TextRequest):
-    try:
-        if request.action == "relecture":
-            prompt = f"""
-            Tu es un rédacteur en chef pour un magazine de luxe alpin.
-            Corrige ce texte en respectant cette charte : {request.charte or ''}
-            Texte à corriger : {request.text}
-            Texte corrigé :
-            """
-        else:  # traduction
-            prompt = f"""
-            Tu es un traducteur spécialisé dans le luxe alpin.
-            Traduis ce texte en anglais en respectant cette charte : {request.charte or ''}
-            Texte à traduire : {request.text}
-            Traduction :
-            """
-
-        result = pipe(prompt)[0]['generated_text']
-        if request.action == "relecture":
-            corrected_text = result.split("Texte corrigé :")[-1].strip()
-        else:
-            corrected_text = result.split("Traduction :")[-1].strip()
-
-        return {"status": "success", "result": corrected_text}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...), action: str = "relecture", charte: Optional[str] = None):
-    try:
-        # Sauvegarder temporairement le fichier
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as temp_file:
-            temp_path = temp_file.name
-            temp_file.write(await file.read())
-
-        # Extraire le texte
-        text = extract_text(temp_path)
-
-        # Traiter le texte
-        request = TextRequest(text=text, action=action, charte=charte)
-        result = await process_text(request)
-
-        # Nettoyer
-        os.remove(temp_path)
-
-        return result
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-def extract_text(file_path: str) -> str:
-    """Extrait le texte d'un fichier PDF, Docx ou Txt."""
-    if file_path.endswith('.pdf'):
-        with pdfplumber.open(file_path) as pdf:
-            return "\n".join([page.extract_text() for page in pdf.pages if page.extract_text()])
-    elif file_path.endswith('.docx'):
-        doc = Document(file_path)
-        return "\n".join([para.text for para in doc.paragraphs])
-    elif file_path.endswith('.txt'):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return f.read()
+    text_fr = ""
+    upload_fr = None
+    if src_fr == "Saisie directe":
+        text_fr = st.text_area("Texte à relire", height=220, key="text_fr")
     else:
-        raise ValueError("Format de fichier non supporté.")
+        upload_fr = st.file_uploader("Uploader un fichier", type=["pdf", "docx", "txt"], key="upload_fr")
+
+    charte_fr = st.text_area(
+        "Charte éditoriale (optionnel)", height=80,
+        placeholder="Ex : ton élégant, éviter les anglicismes, vouvoiement...",
+        key="charte_fr"
+    )
+
+    if st.button("Relire en français", type="primary", key="btn_fr"):
+        if src_fr == "Saisie directe":
+            if not text_fr.strip():
+                st.warning("Veuillez saisir un texte.")
+            else:
+                with st.spinner("Relecture en cours..."):
+                    resp = call_process({"text": text_fr, "action": "relecture_fr", "charte": charte_fr or None})
+                if resp:
+                    st.subheader("Texte corrigé")
+                    st.text_area("", value=resp["result"], height=220, key="result_fr")
+        else:
+            if not upload_fr:
+                st.warning("Veuillez uploader un fichier.")
+            else:
+                with st.spinner("Relecture en cours..."):
+                    resp = call_upload(upload_fr, "relecture_fr", charte_fr)
+                if resp:
+                    st.subheader("Texte corrigé")
+                    st.text_area("", value=resp["result"], height=220, key="result_fr_file")
+                    if "report_url" in resp:
+                        st.info(f"Rapport PDF généré : `{resp['report_url']}`")
+
+
+# ── Tab 2 : Traduction FR → EN ──────────────────────────────────────────────
+with tab2:
+    st.subheader("Agent Traduction FR → EN")
+    st.markdown("Traduit un texte du français vers l'anglais, avec relecture optionnelle.")
+
+    src_en = st.radio(
+        "Source du texte", ["Saisie directe", "Fichier (PDF / DOCX / TXT)"],
+        horizontal=True, key="src_en"
+    )
+
+    text_en = ""
+    upload_en = None
+    if src_en == "Saisie directe":
+        text_en = st.text_area("Texte à traduire", height=220, key="text_en")
+    else:
+        upload_en = st.file_uploader("Uploader un fichier", type=["pdf", "docx", "txt"], key="upload_en")
+
+    charte_en = st.text_area(
+        "Charte éditoriale (optionnel)", height=80,
+        placeholder="Ex : elegant tone, luxury alpine vocabulary, avoid colloquialisms...",
+        key="charte_en"
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        engine_label = st.radio(
+            "Moteur de traduction",
+            ["Mistral (local)", "DeepL", "Comparer les deux"],
+            key="engine"
+        )
+        engine_map = {"Mistral (local)": "mistral", "DeepL": "deepl", "Comparer les deux": "compare"}
+        engine = engine_map[engine_label]
+    with col2:
+        st.markdown("&nbsp;", unsafe_allow_html=True)
+        proofread_after = st.checkbox("Relecture EN après traduction", key="proofread_after")
+
+    if st.button("Traduire", type="primary", key="btn_en"):
+        # Validation input
+        if src_en == "Saisie directe" and not text_en.strip():
+            st.warning("Veuillez saisir un texte.")
+        elif src_en != "Saisie directe" and not upload_en:
+            st.warning("Veuillez uploader un fichier.")
+        else:
+            with st.spinner("Traduction en cours..."):
+                if src_en == "Saisie directe":
+                    resp = call_process({
+                        "text": text_en,
+                        "action": "traduction",
+                        "charte": charte_en or None,
+                        "translation_engine": engine
+                    })
+                else:
+                    resp = call_upload(upload_en, "traduction", charte_en, translation_engine=engine)
+
+            if resp:
+                result = resp["result"]
+
+                # ── Mode comparaison ──────────────────────────────────────
+                if engine == "compare":
+                    st.subheader("Comparaison des traductions")
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.markdown("**Mistral (local fine-tuné)**")
+                        mistral_text = result.get("mistral", "") if isinstance(result, dict) else ""
+                        st.text_area("", value=mistral_text, height=220, key="out_mistral")
+                    with c2:
+                        st.markdown("**DeepL**")
+                        deepl_text = result.get("deepl", "") if isinstance(result, dict) else ""
+                        st.text_area("", value=deepl_text, height=220, key="out_deepl")
+
+                    if proofread_after:
+                        st.subheader("Relecture EN des deux traductions")
+                        for label, trad in [("Mistral", mistral_text), ("DeepL", deepl_text)]:
+                            with st.spinner(f"Relecture de la traduction {label}..."):
+                                r_proof = call_process({
+                                    "text": trad,
+                                    "action": "relecture_en",
+                                    "charte": charte_en or None
+                                })
+                            if r_proof:
+                                st.markdown(f"**Relu — {label}**")
+                                st.text_area("", value=r_proof["result"], height=180, key=f"proof_{label}")
+
+                # ── Mode simple (mistral ou deepl) ────────────────────────
+                else:
+                    st.subheader("Traduction")
+                    st.text_area("", value=result, height=220, key="out_translation")
+
+                    if proofread_after:
+                        with st.spinner("Relecture EN en cours..."):
+                            r_proof = call_process({
+                                "text": result,
+                                "action": "relecture_en",
+                                "charte": charte_en or None
+                            })
+                        if r_proof:
+                            st.subheader("Texte relu en anglais")
+                            st.text_area("", value=r_proof["result"], height=220, key="out_proof")
+
+                if "report_url" in resp:
+                    st.info(f"Rapport PDF généré : `{resp['report_url']}`")

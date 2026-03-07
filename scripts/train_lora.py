@@ -33,7 +33,7 @@ lora_config = LoraConfig(
 model = get_peft_model(model, lora_config)
 
 # Charger le dataset
-dataset = load_dataset("json", data_files=os.path.join(config["paths"]["datasets"], "dataset.jsonl"), split="train")
+dataset = load_dataset("json", data_files=os.path.join(config["paths"]["datasets"], "synthetic_dataset.jsonl"), split="train")
 
 # Tokenizer
 def tokenize_function(examples):
