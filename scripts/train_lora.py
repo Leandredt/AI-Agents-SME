@@ -4,6 +4,7 @@ from datasets import load_dataset
 import torch
 import yaml
 import os
+from trl import SFTTrainer
 
 # Charger la configuration
 with open("../config.yaml", "r") as f:
@@ -52,7 +53,6 @@ training_args = TrainingArguments(
 )
 
 # Entraînement
-from trl import SFTTrainer
 trainer = SFTTrainer(
     model=model,
     args=training_args,

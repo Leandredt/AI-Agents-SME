@@ -1,4 +1,4 @@
-# config.template.yaml
+# config.yaml
 deepl:
   api_key: "e381d18e-459f-4500-9b24-d1472895634a:fx"  # À remplacer par la clé API
   source_lang: "FR"

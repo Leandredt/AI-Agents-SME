@@ -1,5 +1,6 @@
 import json
 from transformers import pipeline
+import os
 
 def generate_synthetic_data(num_examples=50):
     """Génère des paires input/output synthétiques pour le fine-tuning."""

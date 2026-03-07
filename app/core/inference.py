@@ -2,6 +2,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from peft import PeftModel
 import torch
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
