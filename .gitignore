@@ -31,6 +31,10 @@ models/
 *.tar
 *.img
 
+#AI
+.claude
+CLAUDE.md
+
 # System files
 .DS_Store
 EOL
