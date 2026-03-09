@@ -61,56 +61,6 @@ MAGAZINE_PROFILES = {
         "max_new_tokens_proofread": 600,
         "max_new_tokens_translate": 800,
     },
-    "gastronomie": {
-        "description_fr": (
-            "magazine gastronomique et art de vivre haut de gamme, dédié à la cuisine d'auteur, "
-            "aux vins et spiritueux d'exception, aux chefs étoilés et aux terroirs d'excellence"
-        ),
-        "description_en": (
-            "a high-end gastronomy and art-de-vivre magazine dedicated to signature cuisine, "
-            "exceptional wines and spirits, Michelin-starred chefs and fine terroirs"
-        ),
-        "translation_guidelines": (
-            "Preserve the sensory precision and appetite appeal of the text. "
-            "Use accurate culinary vocabulary (mise en place, terroir, degustation, "
-            "umami, reduction, pairing, millesime). Keep the celebratory, epicurean tone."
-        ),
-        "vocabulary_hints_fr": (
-            "terroir, dégustation, accord mets-vins, mise en place, chef étoilé, "
-            "saisonnier, gastronomie, millésime, umami, saveur"
-        ),
-        "vocabulary_hints_en": (
-            "terroir, degustation, food and wine pairing, mise en place, Michelin-starred chef, "
-            "seasonal, gastronomy, vintage, umami, flavour"
-        ),
-        "max_new_tokens_proofread": 600,
-        "max_new_tokens_translate": 800,
-    },
-    "voyage": {
-        "description_fr": (
-            "magazine de voyage et lifestyle luxe, célébrant les destinations d'exception, "
-            "les hôtels de prestige, les cultures du monde et les expériences de voyage uniques"
-        ),
-        "description_en": (
-            "a luxury travel and lifestyle magazine celebrating exceptional destinations, "
-            "prestige hotels, world cultures and unique travel experiences"
-        ),
-        "translation_guidelines": (
-            "Convey wanderlust and cultural richness. "
-            "Use evocative travel vocabulary (immersion, itinerary, hideaway, landmark, "
-            "boutique hotel, suite, concierge, local heritage). Keep a vivid, inspiring tone."
-        ),
-        "vocabulary_hints_fr": (
-            "destination, itinéraire, hôtel boutique, suite, patrimoine, immersion culturelle, "
-            "escale, concierge, carnet de voyage, hospitalité"
-        ),
-        "vocabulary_hints_en": (
-            "destination, itinerary, boutique hotel, suite, heritage, cultural immersion, "
-            "stopover, concierge, travel journal, hospitality"
-        ),
-        "max_new_tokens_proofread": 600,
-        "max_new_tokens_translate": 800,
-    },
 }
 
 _DEFAULT_MAGAZINE_TYPE = "alpine_luxury"

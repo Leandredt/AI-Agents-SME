@@ -10,7 +10,6 @@ mistral:
 
 paths:
   datasets: "./data/datasets"
-  reports: "./data/reports"
   templates: "./data/templates"
 
 scraping:
